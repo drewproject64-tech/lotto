@@ -12,8 +12,8 @@ from decimal import Decimal
 
 NAME = 'Lotto8888'
 USERNAME = 'Lotto_8888_BOT'
-BIO = 'Free number tools: calculate percentages, simplify fractions and view multiplication tables.'
-DESCRIPTION = 'Lotto8888 provides free everyday maths tools. Calculate a percentage of a number, simplify a fraction or view a multiplication table. Tap Start and choose a tool. No registration or subscription required. This is a calculator, with no lottery draws, betting, predictions or prizes.'
+BIO = 'Lotto8888: free percentage calculator, fraction simplifier and multiplication tables.'
+DESCRIPTION = 'Welcome to Lotto8888, your free everyday maths calculator.\n\nCalculate percentages, simplify fractions and view multiplication tables directly in Telegram. Each tool includes a clear example and an explanation of the result.\n\nTap Start to choose a tool. No registration or subscription is required.'
 WELCOME = 'Welcome to Lotto8888 — everyday number tools.\n\nChoose a tool below. Each tool includes an example and works directly in this chat. Free to use; no registration required.'
 PROMPTS = {
     'percent': 'PERCENTAGE\nEnter a percentage and a number, separated by a space.\nExample: 15 200\nThis calculates 15% of 200.\nUse a decimal point or comma, without thousands separators.',
@@ -83,6 +83,8 @@ class Bot:
         if me.get('username', '').lower() != USERNAME.lower():
             raise RuntimeError('BOT_TOKEN must belong to @Lotto_8888_BOT')
         self.api('setMyName', name=NAME)
+        # About appears on the profile; description appears in the empty chat before Start.
+        # The empty language code supplies the fallback for all other user languages.
         for language in ('', 'en'):
             self.api('setMyShortDescription', short_description=BIO, language_code=language)
             self.api('setMyDescription', description=DESCRIPTION, language_code=language)
@@ -139,6 +141,7 @@ def main():
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda *_: stop.set())
     bot.configure()
+    logging.info('About and pre-Start description successfully updated')
     bot.api('deleteWebhook', drop_pending_updates=False)
     logging.info('Profile configured; polling started')
     offset = 0
